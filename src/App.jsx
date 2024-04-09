@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import confetti from "canvas-confetti";
 import { Square } from "./components/Square.jsx";
@@ -17,7 +17,7 @@ function App() {
   const [turn, setTurn] = useState(() => {
     const turnFromStorage = window.localStorage.getItem("turn");
     // si no hay local storage inicia el x
-    return turnFromStorage ?? TURN.X;
+    return turnFromStorage ?? TURNS.X;
   });
 
   const [winner, setWinner] = useState(null);
@@ -33,32 +33,38 @@ function App() {
   };
 
   const updateBoard = (index) => {
-    // si ya tiene algo no actuzalizar la casilla
-    if (board[index]) return;
-    // actualizamos el tablero
-    const newBoard = [...board];
-    newBoard[index] = turn;
-    setBoard(newBoard);
-
-    const newTurn = turn === TURNS.X ? TURNS.O : TURNS.X;
-    setTurn(newTurn);
-    // guardar partida
+    // no actualizamos esta posición
+    // si ya tiene algo
+    if (board[index] || winner) return
+    // actualizar el tablero
+    const newBoard = [...board]
+    newBoard[index] = turn
+    setBoard(newBoard)
+    // cambiar el turno
+    const newTurn = turn === TURNS.X ? TURNS.O : TURNS.X
+    setTurn(newTurn)
+    // guardar aqui partida
     window.localStorage.setItem("board", JSON.stringify(newBoard));
     window.localStorage.setItem("turn", turn);
-    // revisa si hay gabnador
-    const newWinner = checkWinnerFrom(newBoard);
+    // revisar si hay ganador
+    const newWinner = checkWinnerFrom(newBoard)
     if (newWinner) {
-      confetti();
-      setWinner(newWinner);
+      confetti()
+      setWinner(newWinner)
     } else if (checkEndGame(newBoard)) {
-      setWinner(false); // empate
+      setWinner(false) // empate
     }
-  };
+  }
 
-  const checkEndGame = () => {
+  
+
+  const checkEndGame = (newBoard) => {
     return newBoard.every((square) => square !== null);
   };
 
+  useEffect(()=>{
+    console.log('useEffect');
+  },)
   //
 
   return (
@@ -67,10 +73,10 @@ function App() {
         <h1>Gato</h1>
         <button onClick={resetGame}>Resetear juego</button>
         <section className="game">
-          {board.map((cell, index) => {
+          {board.map((square, index) => {
             return (
               <Square key={index} index={index} updateBoard={updateBoard}>
-                {board[index]}
+                {square}
               </Square>
             );
           })}
