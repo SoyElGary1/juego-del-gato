@@ -2,7 +2,7 @@ import { useState } from "react";
 import "./App.css";
 import confetti from "canvas-confetti"
 import { Square } from "./components/Square.jsx";
-import { TURNS, WINNER_COMBOS } from "./constants.js";
+import { TURNS } from "./constants.js";
 import { checkWinnerFrom } from "./logic/board.js";
 import { WinnerModal } from "./components/WinnerModal.jsx";
 
@@ -32,7 +32,7 @@ function App() {
     const newTurn = turn === TURNS.X ? TURNS.O : TURNS.X;
     setTurn(newTurn);
     // revisa si hay gabnador
-    const newWinner = checkWinner(newBoard);
+    const newWinner = checkWinnerFrom(newBoard);
     if (newWinner) {
       confetti()
       setWinner(newWinner);
@@ -67,7 +67,7 @@ function App() {
           <Square isSelected={turn === TURNS.O}>{TURNS.O}</Square>
         </section>
 
-        <WinnerModal/>
+        <WinnerModal winner={winner} resetGame={resetGame}/>
       </main>
     </>
   );
